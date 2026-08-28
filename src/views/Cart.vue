@@ -2,6 +2,7 @@
   <div class="mx-auto max-w-7xl px-4 py-8">
     <Breadcrumb :items="[{ label: 'Cart' }]" />
     <h1 class="mt-5 text-3xl font-black text-ink">Shopping cart</h1>
+    <div v-if="cart.reorderWarnings.length" class="mt-5 rounded-2xl bg-amber-50 p-4 text-sm text-amber-900"><p class="font-black">Reorder recalculated</p><ul class="mt-2 list-disc pl-5"><li v-for="warning in cart.reorderWarnings" :key="`${warning.product_id}-${warning.type}`">{{ warning.name }}: {{ warning.message }}</li></ul></div>
     <div class="mt-6 grid gap-6 lg:grid-cols-[1fr_360px]">
       <section class="space-y-4">
         <EmptyState v-if="!cart.items.length" title="Your cart is empty" message="Start with popular medicines or browse categories.">

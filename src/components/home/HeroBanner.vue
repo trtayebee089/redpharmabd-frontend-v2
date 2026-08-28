@@ -1,5 +1,5 @@
 <template>
-  <section class="grid gap-6 xl:grid-cols-[330px_minmax(0,1fr)] items-start">
+  <section class="grid min-w-0 items-start xl:grid-cols-[330px_minmax(0,1fr)]">
     <!-- Desktop Sidebar -->
     <CategorySidebar
       :categories="categories"
@@ -8,25 +8,23 @@
       @close="emit('close-sidebar')"
     />
 
-    <div
-      class="relative overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-accent-50 to-primary-50 shadow-lg"
-    >
+    <div class="relative min-w-0 overflow-hidden bg-white max-h-[calc(100vh)]">
       <!-- Decorative Background -->
       <span
-        class="pointer-events-none absolute inset-0 bg-gradient-to-br from-accent-50 via-white to-primary-50"
+        class="pointer-events-none absolute inset-0 bg-gradient-to-r from-white via-white to-accent-50/80"
       ></span>
 
       <span
-        class="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-accent-200/40 blur-3xl"
+        class="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-accent-200/35 blur-3xl"
       ></span>
 
       <span
-        class="pointer-events-none absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-primary-200/30 blur-3xl"
+        class="pointer-events-none absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-primary-100/45 blur-3xl"
       ></span>
 
       <!-- Hero Content -->
       <div
-        class="relative grid min-h-[500px] items-center gap-10 px-8 py-10 lg:grid-cols-[1fr_500px] lg:px-12"
+        class="relative grid min-h-[100vh] min-w-0 items-center gap-8 px-4 py-12 sm:min-h-[83vh] sm:px-6 lg:min-h-[83vh] lg:grid-cols-[minmax(0,1fr)_minmax(360px,500px)] lg:gap-10 lg:px-10 xl:px-12"
       >
         <!-- Left Content -->
         <div class="animate-fade-up">
@@ -43,26 +41,26 @@
           </div>
 
           <!-- Heading -->
-          <p class="mt-8 text-lg font-medium text-slate-500">
+          <p class="mt-7 text-base font-medium text-slate-500 sm:text-lg">
             Your daily dose of
           </p>
 
           <h1
-            class="mt-2 font-display text-5xl font-extrabold leading-tight text-slate-900 xl:text-6xl"
+            class="mt-2 font-display text-[2.5rem] font-extrabold leading-[1.05] text-slate-900 sm:text-5xl xl:text-6xl"
           >
             Health &
             <span class="block text-accent-600"> Wellness </span>
           </h1>
 
           <!-- Description -->
-          <p class="mt-6 max-w-xl text-[15px] leading-7 text-slate-600">
+          <p class="mt-5 max-w-xl text-sm leading-6 text-slate-600 sm:mt-6 sm:text-[15px] sm:leading-7">
             Genuine medicines, trusted healthcare brands, vitamins, personal
             care essentials and prescription medicines— delivered quickly with
             pharmacist-backed service.
           </p>
 
           <!-- Features -->
-          <div class="mt-8 flex flex-wrap gap-5">
+          <div class="mt-7 flex flex-wrap gap-x-5 gap-y-3 sm:mt-8">
             <div
               v-for="point in points"
               :key="point"
@@ -77,10 +75,10 @@
           </div>
 
           <!-- Buttons -->
-          <div class="mt-10 flex flex-wrap gap-4">
+          <div class="mt-9 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:flex-wrap sm:gap-4">
             <RouterLink
               to="/categories"
-              class="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-7 py-3.5 text-sm font-bold text-white shadow-lg transition hover:bg-primary-700"
+              class="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-600 px-7 py-3.5 text-sm font-bold text-white transition hover:bg-primary-700"
             >
               Shop Now
 
@@ -89,7 +87,7 @@
 
             <RouterLink
               to="/request-order"
-              class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-7 py-3.5 text-sm font-bold text-slate-800 transition hover:border-primary-300"
+              class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-7 py-3.5 text-sm font-bold text-slate-800 transition hover:border-primary-300 hover:bg-primary-50"
             >
               <Upload class="h-4 w-4 text-primary-600" />
 
@@ -99,15 +97,15 @@
         </div>
 
         <!-- Right Side -->
-        <div class="relative hidden lg:flex items-center justify-center">
+        <div class="relative hidden min-w-0 items-center justify-center lg:flex">
           <!-- Background Circle -->
           <div
-            class="absolute h-[420px] w-[420px] rounded-full bg-gradient-to-br from-accent-100 via-accent-50 to-white"
+            class="absolute h-[390px] w-[390px] max-w-full rounded-full bg-gradient-to-br from-accent-100 via-accent-50 to-white xl:h-[420px] xl:w-[420px]"
           ></div>
 
           <!-- Platform -->
           <div
-            class="absolute bottom-8 h-24 w-[360px] rounded-full bg-gradient-to-b from-slate-200 to-slate-300 shadow-inner"
+            class="absolute bottom-8 h-24 w-[min(360px,88%)] rounded-full bg-gradient-to-b from-slate-100 to-slate-200"
           ></div>
 
           <!-- Featured Product -->
@@ -116,13 +114,13 @@
               v-if="showcase.length"
               :src="showcase[0].image"
               :alt="showcase[0].name"
-              class="mx-auto h-[360px] object-contain drop-shadow-2xl transition duration-500 hover:scale-105"
+              class="mx-auto h-[330px] max-w-full object-contain drop-shadow-xl transition duration-500 hover:scale-105 xl:h-[360px]"
             />
           </div>
 
           <!-- Delivery Card -->
           <div
-            class="absolute top-10 right-0 rounded-2xl bg-white px-5 py-4 shadow-xl ring-1 ring-slate-200"
+            class="absolute right-0 top-10 rounded-2xl bg-white px-5 py-4 shadow-card ring-1 ring-slate-900/[0.06]"
           >
             <div class="flex items-center gap-3">
               <div
@@ -141,7 +139,7 @@
 
           <!-- Genuine Card -->
           <div
-            class="absolute bottom-8 left-0 rounded-2xl bg-white px-5 py-4 shadow-xl ring-1 ring-slate-200"
+            class="absolute bottom-8 left-0 rounded-2xl bg-white px-5 py-4 shadow-card ring-1 ring-slate-900/[0.06]"
           >
             <div class="flex items-center gap-3">
               <div
@@ -164,18 +162,15 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import {
   ArrowRight,
   BadgeCheck,
   CircleCheck,
-  Pill,
   ShieldCheck,
   Truck,
   Upload,
 } from "lucide-vue-next";
-import LiveSearch from "../layout/LiveSearch.vue";
-import { formatPrice } from "../../utils/formatPrice";
 import CategorySidebar from "../category/CategorySidebar.vue";
 
 const props = defineProps({
@@ -197,8 +192,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["close-sidebar"]);
-
-const search = ref(null);
 
 /** Prefer products that actually have artwork for the hero cluster. */
 const showcase = computed(() => {

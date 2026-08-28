@@ -1,0 +1,27 @@
+<template>
+  <AccountShell>
+    <div class="flex flex-wrap items-center justify-between gap-3"><div><p class="text-sm font-bold uppercase tracking-wider text-primary-700">Loyalty & retention</p><h1 class="text-3xl font-black text-ink">My Rewards</h1></div><button class="rounded-xl border border-slate-200 px-4 py-2 font-bold" :disabled="rewards.loading" @click="rewards.load">Refresh</button></div>
+    <div v-if="rewards.loading" class="mt-6 grid gap-4 sm:grid-cols-3"><div v-for="n in 3" :key="n" class="h-28 animate-pulse rounded-3xl bg-slate-100" /></div>
+    <ErrorState v-else-if="rewards.error" class="mt-6" title="Rewards unavailable" :message="rewards.error" />
+    <template v-else>
+      <section class="mt-6 overflow-hidden rounded-[2rem] bg-gradient-to-br from-primary-700 to-slate-950 p-6 text-white"><div class="flex flex-wrap items-end justify-between gap-5"><div><p class="text-sm font-bold uppercase tracking-[.2em] text-white/70">Available balance</p><p class="mt-2 text-5xl font-black">{{ money(wallet.available_points) }}</p><p class="text-white/70">reward points</p></div><div class="text-right"><p class="font-bold">{{ plan.name || 'Membership' }}</p><RouterLink class="text-sm text-white/70 underline" to="/account/membership">Membership dashboard</RouterLink></div></div></section>
+      <section class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"><article v-for="item in stats" :key="item.label" class="rounded-2xl bg-slate-50 p-5"><p class="text-sm text-slate-500">{{ item.label }}</p><p class="mt-1 text-2xl font-black text-ink">{{ money(item.value) }}</p></article></section>
+      <section class="mt-7 rounded-3xl border border-slate-100 p-5"><h2 class="text-xl font-black text-ink">Redeem at checkout</h2><p class="mt-1 text-sm text-slate-500">The server validates your membership, balance, minimum points, and maximum order percentage.</p><div class="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_auto]"><label class="text-sm font-bold text-slate-700">Points<input v-model.number="points" type="number" min="0" class="mt-1 w-full rounded-xl bg-slate-50 px-4 py-3"></label><label class="text-sm font-bold text-slate-700">Current cart total<input :value="cart.subtotal" readonly class="mt-1 w-full rounded-xl bg-slate-100 px-4 py-3"></label><button :disabled="quoting || !points || !cart.subtotal" class="self-end rounded-xl bg-primary-700 px-5 py-3 font-bold text-white disabled:opacity-50" @click="validateRedemption">{{ quoting ? 'Validating…' : 'Use rewards' }}</button></div><p v-if="quote" class="mt-3 rounded-xl bg-primary-50 p-3 text-sm font-semibold text-primary-800">{{ quote.points }} points can apply ৳{{ money(quote.amount) }}. This selection is saved for checkout.</p><p v-if="message" class="mt-3 text-sm text-red-600">{{ message }}</p></section>
+      <section v-if="campaigns.length" class="mt-7"><h2 class="text-xl font-black text-ink">Reward campaigns</h2><div class="mt-3 grid gap-3 md:grid-cols-2"><article v-for="campaign in campaigns" :key="campaign.id" class="rounded-2xl border border-primary-100 bg-primary-50 p-4"><p class="font-black text-primary-900">{{ campaign.name }}</p><p class="text-sm text-primary-800">{{ campaign.description }}</p></article></div></section>
+      <section class="mt-7"><h2 class="text-xl font-black text-ink">Transactions</h2><div class="mt-3 overflow-x-auto"><table class="w-full min-w-[560px] text-left text-sm"><thead class="text-slate-500"><tr><th class="p-3">Date</th><th class="p-3">Type</th><th class="p-3">Points</th><th class="p-3">Balance</th><th class="p-3">Status</th></tr></thead><tbody><tr v-for="item in rewards.transactions" :key="item.id" class="border-t border-slate-100"><td class="p-3">{{ date(item.occurred_at) }}</td><td class="p-3 capitalize">{{ item.type.replaceAll('_',' ') }}</td><td class="p-3 font-bold" :class="item.points >= 0 ? 'text-primary-700' : 'text-red-600'">{{ item.points }}</td><td class="p-3">{{ item.balance_after }}</td><td class="p-3 capitalize">{{ item.status }}</td></tr><tr v-if="!rewards.transactions.length"><td colspan="5" class="p-4 text-slate-500">No reward activity yet.</td></tr></tbody></table></div></section>
+    </template>
+  </AccountShell>
+</template>
+<script setup>
+import { computed, onMounted, ref } from 'vue'
+import AccountShell from './partials/AccountShell.vue'
+import ErrorState from '../../components/common/ErrorState.vue'
+import { useRewardStore } from '../../stores/rewardStore'
+import { useCartStore } from '../../stores/cartStore'
+const rewards=useRewardStore(),cart=useCartStore(),points=ref(0),quote=ref(null),message=ref(''),quoting=ref(false)
+const wallet=computed(()=>rewards.wallet),campaigns=computed(()=>rewards.campaigns),plan=computed(()=>rewards.profile?.membership?.plan||{})
+const stats=computed(()=>[{label:'Pending',value:wallet.value.pending_points},{label:'Lifetime earned',value:wallet.value.lifetime_earned},{label:'Lifetime redeemed',value:wallet.value.lifetime_redeemed},{label:'Expired',value:wallet.value.expired_points}])
+const money=v=>Number(v||0).toLocaleString('en-BD',{maximumFractionDigits:2});const date=v=>v?new Intl.DateTimeFormat('en-BD',{dateStyle:'medium'}).format(new Date(v)):'—'
+async function validateRedemption(){quoting.value=true;message.value='';try{quote.value=await rewards.quote(points.value,cart.subtotal);cart.setRewardPoints(quote.value.points)}catch(e){quote.value=null;message.value=e.message||'Redemption is not available.'}finally{quoting.value=false}}
+onMounted(()=>rewards.load().catch(()=>{}))
+</script>

@@ -26,6 +26,8 @@ const routes = [
   { path: '/account/orders', name: 'orders', component: () => import('../views/account/Orders.vue'), meta: { requiresAuth: true } },
   { path: '/account/orders/:id', name: 'order-detail', component: () => import('../views/account/OrderDetail.vue'), meta: { requiresAuth: true } },
   { path: '/account/membership', name: 'membership', component: () => import('../views/account/Membership.vue'), meta: { requiresAuth: true } },
+  { path: '/account/rewards', name: 'rewards', component: () => import('../views/account/Rewards.vue'), meta: { requiresAuth: true } },
+  { path: '/account/recently-viewed', name: 'recently-viewed', component: () => import('../views/account/RecentlyViewed.vue') },
   { path: '/account/settings', name: 'settings', component: () => import('../views/account/Settings.vue'), meta: { requiresAuth: true } },
   { path: '/:pathMatch(.*)*', name: 'not-found', component: () => import('../views/NotFound.vue') },
 ]

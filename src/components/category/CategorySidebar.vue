@@ -2,7 +2,7 @@
   <!-- Desktop: floating, sticky, independently scrolled navigation panel -->
   <aside class="hidden xl:block">
     <div
-      class="sticky top-[136px] flex max-h-[calc(100vh-10.5rem)] flex-col overflow-hidden rounded-[26px] bg-white shadow-card ring-1 ring-slate-900/[0.06]"
+      class="sticky top-[136px] flex max-h-[calc(100vh)] flex-col overflow-hidden bg-white shadow-card ring-1 ring-slate-900/[0.06] border border-[#eee]"
     >
       <div class="flex items-center justify-between gap-3 border-b border-slate-900/[0.06] px-4 py-4">
         <div class="flex items-center gap-2.5">

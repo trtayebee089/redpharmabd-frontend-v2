@@ -8,6 +8,8 @@
           <label class="text-sm font-bold text-slate-700">Full name <input v-model="form.name" required class="mt-2 w-full rounded-2xl bg-slate-50 px-4 py-3 outline-none focus:ring-2 focus:ring-primary-500" /></label>
           <label class="text-sm font-bold text-slate-700">Phone number <input v-model="form.phone" required class="mt-2 w-full rounded-2xl bg-slate-50 px-4 py-3 outline-none focus:ring-2 focus:ring-primary-500" /></label>
           <label class="md:col-span-2 text-sm font-bold text-slate-700">Delivery address <textarea v-model="form.address" required rows="3" class="mt-2 w-full rounded-2xl bg-slate-50 px-4 py-3 outline-none focus:ring-2 focus:ring-primary-500"></textarea></label>
+          <label class="text-sm font-bold text-slate-700">Division <input v-model="form.division" required class="mt-2 w-full rounded-2xl bg-slate-50 px-4 py-3 outline-none focus:ring-2 focus:ring-primary-500" /></label>
+          <label class="text-sm font-bold text-slate-700">District <input v-model="form.district" required class="mt-2 w-full rounded-2xl bg-slate-50 px-4 py-3 outline-none focus:ring-2 focus:ring-primary-500" /></label>
           <label class="text-sm font-bold text-slate-700">Payment method <select v-model="form.payment_method" class="mt-2 w-full rounded-2xl bg-slate-50 px-4 py-3 outline-none focus:ring-2 focus:ring-primary-500"><option value="cod">Cash on delivery</option><option value="online">Online payment</option></select></label>
           <label class="text-sm font-bold text-slate-700">Prescription upload <input type="file" class="mt-2 w-full rounded-2xl bg-slate-50 px-4 py-3 text-sm" /></label>
           <label class="md:col-span-2 text-sm font-bold text-slate-700">Order notes <textarea v-model="form.notes" rows="3" class="mt-2 w-full rounded-2xl bg-slate-50 px-4 py-3 outline-none focus:ring-2 focus:ring-primary-500"></textarea></label>
@@ -35,7 +37,7 @@ const cart = useCartStore()
 const router = useRouter()
 const submitting = ref(false)
 const error = ref('')
-const form = reactive({ name: '', phone: '', address: '', payment_method: 'cod', notes: '' })
+const form = reactive({ name: '', phone: '', address: '', division: '', district: '', payment_method: 'cod', notes: '' })
 
 async function submit() {
   if (!cart.items.length) return
@@ -43,13 +45,16 @@ async function submit() {
   error.value = ''
   try {
     const order = await orderService.checkout({
-      ...form,
-      items: cart.items.map((item) => ({ product_id: item.product.id, quantity: item.quantity })),
+      customer: { name: form.name, phone: form.phone, address: form.address, division: form.division, district: form.district },
+      payment_method: form.payment_method,
+      notes: form.notes,
+      items: cart.items.map((item) => ({ product_id: item.product.id, qty: item.quantity })),
       subtotal: cart.subtotal,
-      delivery_charge: cart.deliveryCharge,
+      shipping_cost: cart.deliveryCharge,
       total: cart.total,
+      reward_points: cart.rewardPoints,
     })
-    const id = order?.id || order?.order_id || Date.now()
+    const id = order?.sale?.id || order?.id || order?.order_id || Date.now()
     cart.clear()
     router.push(`/order-confirmation/${id}`)
   } catch (exception) {

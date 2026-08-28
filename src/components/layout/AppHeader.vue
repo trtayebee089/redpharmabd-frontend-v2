@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="contents">
     <!-- Announcement rail: scrolls away, never eats sticky height -->
     <div class="bg-ink text-slate-300">
       <div
@@ -70,6 +70,7 @@
           <button
             type="button"
             class="relative flex flex-col items-center rounded-xl px-3 py-1.5 text-slate-600 transition hover:bg-slate-100 hover:text-ink active:scale-95"
+            aria-label="Cart"
             @click="ui.openCart"
           >
             <span class="relative">

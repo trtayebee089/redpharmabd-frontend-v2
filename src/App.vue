@@ -1,5 +1,5 @@
 <template>
-  <div class="flex min-h-screen flex-col overflow-x-hidden bg-canvas text-ink">
+  <div class="flex min-h-screen flex-col overflow-x-clip bg-canvas text-ink">
     <AppHeader />
 
     <main class="flex-1">

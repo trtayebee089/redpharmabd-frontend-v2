@@ -61,10 +61,12 @@ import ProductSection from '../components/product/ProductSection.vue'
 import { productService } from '../services/productService'
 import { useCartStore } from '../stores/cartStore'
 import { formatPrice } from '../utils/formatPrice'
+import { useRecentlyViewedStore } from '../stores/recentlyViewedStore'
 
 const route = useRoute()
 const router = useRouter()
 const cart = useCartStore()
+const recentlyViewed = useRecentlyViewedStore()
 const product = ref({})
 const related = ref([])
 const quantity = ref(1)
@@ -73,6 +75,7 @@ const loading = ref(true)
 async function load() {
   loading.value = true
   product.value = await productService.find(route.params.slug)
+  recentlyViewed.record(product.value)
   const response = await productService.list({ category: product.value.category_slug, per_page: 12 })
   related.value = response.data.filter((item) => item.id !== product.value.id).slice(0, 6)
   loading.value = false

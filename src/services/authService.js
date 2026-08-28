@@ -10,28 +10,32 @@ function normalizeAuth(payload) {
 
 export const authService = {
   async login(credentials) {
-    const response = await api.post('/login', credentials)
+    const response = await api.post('/v1/customer/login', credentials)
     return normalizeAuth(response.data)
   },
   async register(payload) {
-    const response = await api.post('/register', payload)
+    const response = await api.post('/v1/customer/register', payload)
     return normalizeAuth(response.data)
   },
   async forgotPassword(payload) {
-    const response = await api.post('/forgot-password', payload)
+    const response = await api.post('/v1/customer/forgot-password', payload)
+    return unwrap(response)
+  },
+  async resetPassword(payload) {
+    const response = await api.post('/v1/customer/reset-password', payload)
     return unwrap(response)
   },
   async profile() {
-    const response = await api.get('/profile')
+    const response = await api.get('/v1/customer/profile')
     return unwrap(response)
   },
   async updateProfile(payload) {
-    const response = await api.put('/profile', payload)
+    const response = await api.put('/v1/customer/profile', payload)
     return unwrap(response)
   },
   async logout() {
     try {
-      await api.post('/logout')
+      await api.post('/v1/customer/logout')
     } finally {
       localStorage.removeItem('redpharma_token')
       localStorage.removeItem('redpharma_user')

@@ -1,12 +1,12 @@
 <template>
   <AccountShell>
-    <h1 class="text-3xl font-black text-ink">Order #{{ $route.params.id }}</h1>
-    <div class="mt-6 rounded-2xl bg-primary-50 p-5 text-sm text-slate-700">
-      Order details will show live item and status information when the backend order detail endpoint is available.
-    </div>
+    <div class="flex flex-wrap items-center justify-between gap-3"><h1 class="text-3xl font-black text-ink">Order #{{ route.params.id }}</h1><button class="rounded-xl bg-primary-700 px-5 py-3 font-bold text-white disabled:opacity-50" :disabled="reordering" @click="reorder">{{ reordering ? 'Recalculating…' : 'Reorder' }}</button></div>
+    <LoadingSkeleton v-if="loading" class="mt-6 h-52"/><ErrorState v-else-if="error" class="mt-6" title="Order unavailable" :message="error"/>
+    <template v-else-if="order"><section class="mt-6 grid gap-3 sm:grid-cols-3"><article class="rounded-2xl bg-slate-50 p-4"><p class="text-sm text-slate-500">Status</p><p class="font-black text-ink">{{ order.status || order.tracking?.current_status || 'Processing' }}</p></article><article class="rounded-2xl bg-slate-50 p-4"><p class="text-sm text-slate-500">Order total</p><p class="font-black text-ink">৳{{ money(order.grand_total) }}</p></article><article class="rounded-2xl bg-slate-50 p-4"><p class="text-sm text-slate-500">Placed</p><p class="font-black text-ink">{{ date(order.date) }}</p></article></section><section class="mt-6"><h2 class="text-xl font-black text-ink">Items</h2><div class="mt-3 divide-y divide-slate-100 rounded-2xl border border-slate-100"><div v-for="item in order.items" :key="item.id" class="flex items-center justify-between gap-4 p-4"><div><p class="font-bold text-ink">{{ item.name }}</p><p class="text-sm text-slate-500">{{ item.quantity }}</p></div><p class="font-bold">৳{{ money(item.subtotal) }}</p></div></div></section></template>
+    <section v-if="warnings.length" class="mt-6 rounded-2xl bg-amber-50 p-4" aria-live="polite"><h2 class="font-black text-amber-900">Cart updated with current information</h2><ul class="mt-2 list-disc pl-5 text-sm text-amber-800"><li v-for="warning in warnings" :key="`${warning.product_id}-${warning.type}`">{{ warning.name }}: {{ warning.message }}</li></ul></section>
   </AccountShell>
 </template>
-
 <script setup>
-import AccountShell from './partials/AccountShell.vue'
+import { onMounted, ref } from 'vue';import { useRoute,useRouter } from 'vue-router';import AccountShell from './partials/AccountShell.vue';import LoadingSkeleton from '../../components/common/LoadingSkeleton.vue';import ErrorState from '../../components/common/ErrorState.vue';import { orderService } from '../../services/orderService';import { useCartStore } from '../../stores/cartStore'
+const route=useRoute(),router=useRouter(),cart=useCartStore(),order=ref(null),loading=ref(true),error=ref(''),reordering=ref(false),warnings=ref([]);const money=v=>Number(v||0).toLocaleString('en-BD',{maximumFractionDigits:2}),date=v=>v?new Intl.DateTimeFormat('en-BD',{dateStyle:'medium'}).format(new Date(v)):'—';async function load(){try{order.value=await orderService.find(route.params.id)}catch(e){error.value=e.message||'Unable to load order.'}finally{loading.value=false}}async function reorder(){reordering.value=true;error.value='';try{const result=await orderService.reorder(route.params.id);cart.replaceFromReorder(result);router.push('/cart')}catch(e){error.value=e.message||'Unable to reorder.'}finally{reordering.value=false}}onMounted(load)
 </script>

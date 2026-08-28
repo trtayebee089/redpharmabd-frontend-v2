@@ -18,6 +18,8 @@ function linePrice(item) {
 export const useCartStore = defineStore('cart', {
   state: () => ({
     items: readCart(),
+    rewardPoints: Number(localStorage.getItem('redpharma_reward_points') || 0),
+    reorderWarnings: [],
   }),
   getters: {
     count: (state) => state.items.reduce((sum, item) => sum + item.quantity, 0),
@@ -67,6 +69,18 @@ export const useCartStore = defineStore('cart', {
     },
     clear() {
       this.items = []
+      this.rewardPoints = 0
+      this.reorderWarnings = []
+      localStorage.removeItem('redpharma_reward_points')
+      this.persist()
+    },
+    setRewardPoints(points) {
+      this.rewardPoints = Math.max(0, Number(points || 0))
+      localStorage.setItem('redpharma_reward_points', String(this.rewardPoints))
+    },
+    replaceFromReorder(payload) {
+      this.items = (payload.items || []).map((line) => ({ id: String(line.product.id), product: { ...line.product, stock: Number(line.product.qty || 0), price: Number(line.unit_price || line.product.price || 0) }, quantity: Number(line.quantity || 1) }))
+      this.reorderWarnings = payload.warnings || []
       this.persist()
     },
   },

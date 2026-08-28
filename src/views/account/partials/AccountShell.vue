@@ -18,6 +18,8 @@ const items = [
   { label: 'Profile', to: '/account/profile' },
   { label: 'Orders', to: '/account/orders' },
   { label: 'Membership', to: '/account/membership' },
+  { label: 'My Rewards', to: '/account/rewards' },
+  { label: 'Recently Viewed', to: '/account/recently-viewed' },
   { label: 'Settings', to: '/account/settings' },
 ]
 </script>

@@ -37,11 +37,15 @@ export const useAuthStore = defineStore('auth', {
         this.loading = false
       }
     },
-    logout() {
-      this.user = null
-      this.token = ''
-      localStorage.removeItem('redpharma_token')
-      localStorage.removeItem('redpharma_user')
+    async logout() {
+      try {
+        await authService.logout()
+      } finally {
+        this.user = null
+        this.token = ''
+        localStorage.removeItem('redpharma_token')
+        localStorage.removeItem('redpharma_user')
+      }
     },
   },
 })
